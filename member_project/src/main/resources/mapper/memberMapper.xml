@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 레퍼지토리 클래스와 연결되어있음. -->
+<mapper namespace="Member">
+    <!--    parametertype은 넘겨주는 데이터의 형식을 적어야한다 ex) 객체 or String...
+            parametertype에는 넘기는 데이터의 풀 경로를 써주어야함
+           com.lsn.member.dto.MemberDTO (원칙) //
+           현재는 mybatis-config.xml파일에 있는
+           <typeAliases>
+                <typeAlias type="com.codingrecipe.member.dto.MemberDTO" alias="member"></typeAlias>
+            </typeAliases>
+            alisases 설정을 이용해서 해당 경로의 별칭을 지정하여 사용가능 (member) (예외)
+    -->
+    <insert id="save" parameterType="member">
+        insert into member_table(memberEmail, memberPassword, memberName, memberAge, memberMobile)
+        values (#{memberEmail}, #{memberPassword}, #{memberName}, #{memberAge}, #{memberMobile})
+    </insert>
+
+    <!-- resultType 반환받는 결과값을 적어주어야함 ex) string or 객체
+        현제 mybatis-config파일에 반환받는 값의 경로가 있다.-->
+    <select id="login" parameterType="member" resultType="member">
+        <!-- 멤버_테이블에서 로그인페이지에서 입력한 이메일과 패스워드와 일치하는 결과를 모두 가져온다.-->
+        select * from member_table where memberEmail=#{memberEmail} and memberPassword=#{memberPassword}
+    </select>
+
+
+    <!-- 넘겨주는 값이 없어서 파라미터 타입이 필요없음-->
+    <select id="findAll" resultType="member">
+        select * from member_table
+    </select>
+
+    <!-- 넘겨주는 타입은 Long 타입의 id값 받는값은 member객체 -->
+    <select id="findById" parameterType="Long" resultType="member">
+        select * from member_table where id=#{id}
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        delete from member_table where id=#{id}
+    </delete>
+
+    <select id="findByMemberEmail" parameterType="String" resultType="member">
+        select * from member_table where memberEmail=#{loginEmail}
+    </select>
+
+    <update id="update" parameterType="member">
+        update member_table set memberAge=#{memberAge}, memberMobile=#{memberMobile}
+        where id=#{id}
+    </update>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
