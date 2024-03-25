@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 레퍼지토리 클래스와 연결되어있음. -->
+<mapper namespace="Board">
+    <!--    parametertype은 넘겨주는 데이터의 형식을 적어야한다 ex) 객체 or String...
+            parametertype에는 넘기는 데이터의 풀 경로를 써주어야함
+           com.lsn.member.dto.MemberDTO (원칙) //
+           현재는 mybatis-config.xml파일에 있는
+           <typeAliases>
+                <typeAlias type="com.codingrecipe.member.dto.MemberDTO" alias="member"></typeAlias>
+            </typeAliases>
+            alisases 설정을 이용해서 해당 경로의 별칭을 지정하여 사용가능 (member) (예외)
+    -->
+    <insert id="save" parameterType="board">
+        insert into board_table(boardWriter, boardPass, boardTitle, boardContents)
+        values (#{boardWriter}, #{boardPass}, #{boardTitle}, #{boardContents})
+    </insert>
+
+    <select id="findAll" resultType="board">
+        select * from board_table order by id desc
+    </select>
+
+    <select id="findById" parameterType="Long" resultType="board">
+        <!-- #뒤에 id는 념겨받는 파라미터값 -->
+        select * from board_table where id=#{id}
+    </select>
+
+    <update id="updateHits" parameterType="Long">
+        <!-- 사용자가 해당 글을 보면 해당 아이디의 개시글 조회수 (데이터베이스의 hits칼럼)에 값을 1증가시킨다. -->
+        update board_table set boardHits = boardHits + 1 where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        delete from board_table where id=#{id}
+    </delete>
+
+    <update id="update" parameterType="board">
+        update board_table set boardTitle=#{boardTitle}, boardContents=#{boardContents}
+        where id=#{id}
+    </update>
+
+    <select id="pagingList" parameterType="java.util.HashMap" resultType="board">
+        select * from board_table order by id desc limit #{start}, #{limit}
+    </select>
+
+    <select id="boardCount" resultType="Integer">
+        <!--  보드테이블의 갯수를 카운트함 count의 기준은 pk를 기준하는게 좋다.-->
+        select count(id) from board_table
+    </select>
+</mapper>
